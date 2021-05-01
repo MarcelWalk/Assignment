@@ -25,7 +25,7 @@ namespace FileParser
         public int CalculateProgress(long currentLine, long numOfLines)
         {
             var onePercent = 100.0f / numOfLines;
-            return (int)(onePercent * currentLine);
+            return (int) (onePercent * currentLine);
         }
 
         public void ResetProgress()

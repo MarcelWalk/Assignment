@@ -32,13 +32,15 @@
                 Margin="0,10,10,0" VerticalAlignment="Top" Height="25"
                 Width="82" Background="{x:Null}" BorderBrush="#FFFF3939" />
         <Grid Background="#FFE6E6E6" Height="25" VerticalAlignment="Bottom">
-            <ProgressBar Value="{Binding ParsingProgress}" IsIndeterminate="{Binding IsPreparingParsing}" HorizontalAlignment="Left" Height="10" Margin="57,0,0,0"
+            <ProgressBar Value="{Binding ParsingProgress}" IsIndeterminate="{Binding IsPreparingParsing}"
+                         HorizontalAlignment="Left" Height="10" Margin="57,0,0,0"
                          VerticalAlignment="Center" Width="100" />
             <Label x:Name="Label_Copy" Content="{Binding ParsingProgressLabelText, FallbackValue=0%}"
                    HorizontalAlignment="Left"
                    VerticalAlignment="Center" Height="25" Padding="10,0,0,0"
                    VerticalContentAlignment="Center" Width="52" />
-            <CheckBox Content="Leeren bei abbruch" Margin="0,0,10,0" IsChecked="{Binding IsClearingEnabled}" VerticalAlignment="Center" HorizontalAlignment="Right" Width="122"/>
+            <CheckBox Content="Leeren bei abbruch" Margin="0,0,10,0" IsChecked="{Binding IsClearingEnabled}"
+                      VerticalAlignment="Center" HorizontalAlignment="Right" Width="122" />
         </Grid>
     </Grid>
 </Window>

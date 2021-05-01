@@ -114,13 +114,10 @@ namespace FileParser.Tests
             var vm = new MainWindowViewModel();
 
             Assert.IsFalse(vm.StartAllowed(null));
-            
+
             vm.StartParsing("./TestFiles/ShortSampleFile.txt");
 
-            while (vm.ParsingProgress < 100)
-            {
-                Thread.Sleep(10);
-            }
+            while (vm.ParsingProgress < 100) Thread.Sleep(10);
 
             var parsingResult = vm.WordCountCollection.ToDictionary(entry => entry.Word,
                 entry => entry.Count);

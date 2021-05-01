@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Assignment.Model;
 using Assignment.Poco;
@@ -10,14 +11,14 @@ namespace Assignment.ViewModel
 {
     public class MainWindowViewModel : ViewModelBase
     {
+        private bool _isClearingEnabled;
+        private bool _isParsingAborted;
+        private bool _isPreparingParsing;
         private AsciiFileParser _parser;
         private double _parsingProgress;
         private string _parsingProgressLabelText = Constants.ZERO_PERCENT;
         private string _selectedFilePath;
         private ObservableCollection<WordCountEntry> _wordCountCollection = new ObservableCollection<WordCountEntry>();
-        private bool _isPreparingParsing;
-        private bool _isClearingEnabled;
-        private bool _isParsingAborted;
 
         public MainWindowViewModel()
         {
@@ -88,7 +89,7 @@ namespace Assignment.ViewModel
 
             if (_isParsingAborted && IsClearingEnabled) return;
 
-            foreach (var (key, value) in resFile)
+            foreach (var (key, value) in resFile.OrderByDescending(kvp => kvp.Value))
                 WordCountCollection.Add(KeyValueMapper.MapToWordCountEntry(key, value));
         }
 
@@ -115,12 +116,12 @@ namespace Assignment.ViewModel
 
         public bool StartAllowed(object obj)
         {
-            return !string.IsNullOrEmpty((string)obj);
+            return !string.IsNullOrEmpty((string) obj);
         }
 
         public bool CancelAllowed(object obj)
         {
-            return _parser is { IsParsing: true };
+            return _parser is {IsParsing: true};
         }
     }
 }

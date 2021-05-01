@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace FileParserTests
 {
@@ -10,11 +9,10 @@ namespace FileParserTests
             Dictionary<string, int> sourceDictionary)
         {
             if (sourceDictionary.Count != referenceDictioanry.Count)
-                return new KeyValuePair<bool, string>(false, 
+                return new KeyValuePair<bool, string>(false,
                     $"Dictionaries have a different size.\nExpected: {referenceDictioanry.Count}, Is: {sourceDictionary.Count}");
 
             foreach (var kvpRef in referenceDictioanry)
-            {
                 try
                 {
                     if (kvpRef.Value != sourceDictionary[kvpRef.Key])
@@ -31,8 +29,7 @@ namespace FileParserTests
                     return new KeyValuePair<bool, string>(false,
                         $"Unexpected error:\n{e.Message}");
                 }
-            }
-            
+
             return new KeyValuePair<bool, string>(true, "Success");
         }
     }
