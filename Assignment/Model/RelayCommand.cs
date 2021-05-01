@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace AntonPaar.Model
+namespace Assignment.Model
 {
     public class RelayCommand : ICommand
     {
@@ -10,7 +10,7 @@ namespace AntonPaar.Model
 
         public RelayCommand(Action<object> execute, Predicate<object> canExecute)
         {
-            _execute = execute ?? throw new NullReferenceException("Execute is null");
+            _execute = execute ?? throw new NullReferenceException(Constants.ERR_VAL_NULL);
             _canExecute = canExecute;
         }
 

@@ -1,4 +1,4 @@
-﻿namespace AntonPaar.Poco
+﻿namespace Assignment.Poco
 {
     public class WordCountEntry
     {

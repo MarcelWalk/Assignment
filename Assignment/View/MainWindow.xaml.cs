@@ -1,7 +1,7 @@
 ﻿using System.Windows;
-using AntonPaar.ViewModel;
+using Assignment.ViewModel;
 
-namespace AntonPaar
+namespace Assignment
 {
     /// <summary>
     ///     Interaction logic for MainWindow.xaml
@@ -13,23 +13,5 @@ namespace AntonPaar
             InitializeComponent();
             DataContext = new MainWindowViewModel();
         }
-
-        //private void Button_Click(object sender, RoutedEventArgs e)
-        //{
-        //}
-
-        //private async void Button_Click_1(object sender, RoutedEventArgs e)
-        //{
-        //    var parser = new AsciiFileParser();
-        //    var reporter = new ProgressReporter();
-
-        //    reporter.ProgressMade += (o, args) =>
-        //    {
-        //        Dispatcher.BeginInvoke((Action) (() => { ProgressBar.Value = args.Progress; }));
-        //    };
-
-        //    var resFile = await Task.Run(() =>
-        //        parser.ParseFile(new FileInfo("C:/Users/walkm/Desktop/SampleLong.txt"), reporter));
-        //}
     }
 }

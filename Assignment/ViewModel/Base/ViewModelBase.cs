@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace AntonPaar.ViewModel.Base
+namespace Assignment.ViewModel.Base
 {
     public class ViewModelBase : INotifyPropertyChanged
     {

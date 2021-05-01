@@ -1,9 +1,9 @@
 ﻿using System.Windows;
 
-namespace AntonPaar
+namespace Assignment
 {
     /// <summary>
-    /// Interaction logic for App.xaml
+    ///     Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application
     {

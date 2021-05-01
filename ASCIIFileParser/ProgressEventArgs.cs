@@ -4,6 +4,9 @@ namespace FileParser
 {
     public class ProgressEventArgs : EventArgs
     {
-        public long Progress { get; set; }
+        /// <summary>
+        ///     Contains the current progress in percent
+        /// </summary>
+        public int Progress { get; set; }
     }
 }

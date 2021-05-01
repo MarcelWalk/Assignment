@@ -1,6 +1,6 @@
-﻿using AntonPaar.Poco;
+﻿using Assignment.Poco;
 
-namespace AntonPaar.Model
+namespace Assignment.Model
 {
     public class KeyValueMapper
     {

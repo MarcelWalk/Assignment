@@ -1,27 +1,48 @@
-﻿namespace FileParser
+﻿using System;
+
+namespace FileParser
 {
-    public class ProgressReporter : ProgressReporterBase
+    public class ProgressReporter : IProgressReporter
     {
-        private long _lastProgress;
+        private int _lastProgress;
 
-        public override void ReportProgress(long currentLine, long numOfLines)
+        public void ReportProgress(long currentLine, long numOfLines)
         {
-            var progress = CalculateProgress(currentLine, numOfLines);
+            var progressInPercent = CalculateProgress(currentLine, numOfLines);
 
-            if (progress == _lastProgress) return;
+            if (progressInPercent == _lastProgress) return;
 
+            ReportProgress(progressInPercent);
+        }
+
+        public void ReportProgress(int progress)
+        {
             var args = BuildProgressEventArgs(progress);
             OnProgressMade(args);
             _lastProgress = progress;
         }
 
-        public override void ResetProgress()
+        public int CalculateProgress(long currentLine, long numOfLines)
+        {
+            var onePercent = 100.0f / numOfLines;
+            return (int)(onePercent * currentLine);
+        }
+
+        public void ResetProgress()
         {
             var args = BuildProgressEventArgs(0);
             OnProgressMade(args);
         }
 
-        private static ProgressEventArgs BuildProgressEventArgs(long progress)
+        protected virtual void OnProgressMade(ProgressEventArgs e)
+        {
+            var handler = ProgressMade;
+            handler?.Invoke(this, e);
+        }
+
+        public event EventHandler<ProgressEventArgs> ProgressMade;
+
+        private static ProgressEventArgs BuildProgressEventArgs(int progress)
         {
             return new ProgressEventArgs
             {

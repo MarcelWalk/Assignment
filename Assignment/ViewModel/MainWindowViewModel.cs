@@ -1,21 +1,23 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using AntonPaar.Model;
-using AntonPaar.Poco;
-using AntonPaar.ViewModel.Base;
+using Assignment.Model;
+using Assignment.Poco;
+using Assignment.ViewModel.Base;
 using FileParser;
 using Microsoft.Win32;
 
-namespace AntonPaar.ViewModel
+namespace Assignment.ViewModel
 {
     public class MainWindowViewModel : ViewModelBase
     {
         private AsciiFileParser _parser;
         private double _parsingProgress;
-        private string _parsingProgressLabelText = "0%";
+        private string _parsingProgressLabelText = Constants.ZERO_PERCENT;
         private string _selectedFilePath;
         private ObservableCollection<WordCountEntry> _wordCountCollection = new ObservableCollection<WordCountEntry>();
+        private bool _isPreparingParsing;
+        private bool _isClearingEnabled;
+        private bool _isParsingAborted;
 
         public MainWindowViewModel()
         {
@@ -24,10 +26,22 @@ namespace AntonPaar.ViewModel
             CancelButtonCommand = new RelayCommand(CancelParsing, CancelAllowed);
         }
 
+        public bool IsClearingEnabled
+        {
+            get => _isClearingEnabled;
+            set => SetField(ref _isClearingEnabled, value);
+        }
+
         public ObservableCollection<WordCountEntry> WordCountCollection
         {
             get => _wordCountCollection;
             set => SetField(ref _wordCountCollection, value);
+        }
+
+        public bool IsPreparingParsing
+        {
+            get => _isPreparingParsing;
+            set => SetField(ref _isPreparingParsing, value);
         }
 
         public double ParsingProgress
@@ -52,11 +66,10 @@ namespace AntonPaar.ViewModel
         public RelayCommand SelectFileButtonCommand { get; }
         public RelayCommand CancelButtonCommand { get; }
 
-        private bool _isParsingFile = false;
-
         public void SelectFile(object obj)
         {
             var openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = Constants.OPEN_FILE_DIALOG_FILTER;
             if (openFileDialog.ShowDialog() == true)
                 SelectedFilePath = openFileDialog.FileName;
         }
@@ -64,17 +77,16 @@ namespace AntonPaar.ViewModel
         public async void StartParsing(object filePath)
         {
             WordCountCollection.Clear();
+            _isParsingAborted = false;
 
             _parser = new AsciiFileParser();
             var progReporter = new ProgressReporter();
 
             progReporter.ProgressMade += ProgReporterOnProgressMade;
 
-            _isParsingFile = true;
-
             var resFile = await Task.Run(() => _parser.ParseFile(filePath.ToString(), progReporter));
-            
-            _isParsingFile = false;
+
+            if (_isParsingAborted && IsClearingEnabled) return;
 
             foreach (var (key, value) in resFile)
                 WordCountCollection.Add(KeyValueMapper.MapToWordCountEntry(key, value));
@@ -82,12 +94,22 @@ namespace AntonPaar.ViewModel
 
         private void ProgReporterOnProgressMade(object? sender, ProgressEventArgs e)
         {
-            ParsingProgress = e.Progress;
-            ParsingProgressLabelText = $"{ParsingProgress}%";
+            if (e.Progress < 0)
+            {
+                IsPreparingParsing = true;
+                ParsingProgressLabelText = Constants.ZERO_PERCENT;
+            }
+            else
+            {
+                IsPreparingParsing = false;
+                ParsingProgress = e.Progress;
+                ParsingProgressLabelText = $"{ParsingProgress}%";
+            }
         }
 
-        private void CancelParsing(object obj)
+        public void CancelParsing(object obj)
         {
+            _isParsingAborted = true;
             _parser?.AbortProcessing();
         }
 
@@ -98,7 +120,7 @@ namespace AntonPaar.ViewModel
 
         public bool CancelAllowed(object obj)
         {
-            return _parser != null && _isParsingFile;
+            return _parser is { IsParsing: true };
         }
     }
 }

@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,15 +12,25 @@ namespace FileParser
 {
     public class AsciiFileParser
     {
-        private readonly ConcurrentDictionary<string, int> _wordDictionary = new ConcurrentDictionary<string, int>();
-        private readonly CancellationTokenSource _cts = new CancellationTokenSource();
+        private CancellationTokenSource _cts;
 
-        public ConcurrentDictionary<string, int> ParseFile(string filePath, ProgressReporterBase reporter)
+        private ConcurrentDictionary<string, int> _wordDictionary;
+
+        public bool IsParsing { get; set; }
+
+        public ConcurrentDictionary<string, int> ParseFile(string filePath, IProgressReporter reporter)
         {
-            reporter.ResetProgress();
+            _cts = new CancellationTokenSource();
+            _wordDictionary = new ConcurrentDictionary<string, int>();
+
+            IsParsing = true;
+
+            reporter.ReportProgress(-1);
 
             var fileLines = SplitFileIntoLines(filePath);
-            var numOfLines = fileLines.Length;
+            var numOfLines = fileLines.Count();
+
+            reporter.ResetProgress();
 
             var po = new ParallelOptions
             {
@@ -28,12 +42,12 @@ namespace FileParser
 
             try
             {
-                Parallel.For(0, numOfLines, po, i =>
+                Parallel.ForEach(fileLines, po, i =>
                 {
                     if (po.CancellationToken.IsCancellationRequested)
                         return;
 
-                    GetLineWordCount(fileLines[i]);
+                    GetLineWordCount(i);
 
                     Interlocked.Increment(ref lineNumber);
 
@@ -49,12 +63,14 @@ namespace FileParser
                 _cts.Dispose();
             }
 
+            IsParsing = false;
+
             return _wordDictionary;
         }
 
-        private string[] SplitFileIntoLines(string filePath)
+        private IEnumerable<string> SplitFileIntoLines(string filePath)
         {
-            return File.ReadAllLines(filePath);
+            return File.ReadLines(filePath, Encoding.ASCII);
         }
 
         private void GetLineWordCount(string line)
@@ -62,10 +78,8 @@ namespace FileParser
             var words = line.Split();
 
             foreach (var word in words)
-            {
                 if (!string.IsNullOrEmpty(word.Trim()))
                     _wordDictionary.AddOrUpdate(word, 1, (key, value) => value + 1);
-            }
         }
 
         public void AbortProcessing()

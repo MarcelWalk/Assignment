@@ -4,9 +4,9 @@ using FileParser;
 
 namespace FileParserTests
 {
-    public class FileProgressReporter : ProgressReporterBase
+    public class FileProgressReporter : IProgressReporter
     {
-        private float _lastProgress;
+        private int _lastProgress;
         private long _readLines;
 
         public long ReadLines
@@ -15,7 +15,7 @@ namespace FileParserTests
             set => _readLines = value;
         }
 
-        public override void ReportProgress(long currentLine, long numOfLines)
+        public void ReportProgress(long currentLine, long numOfLines)
         {
             Interlocked.Increment(ref _readLines);
 
@@ -26,7 +26,18 @@ namespace FileParserTests
             Console.WriteLine($"[{currentLine + 1}/{numOfLines}] Progress: {progress}%");
         }
 
-        public override void ResetProgress()
+        public void ReportProgress(int num)
+        {
+            Console.WriteLine($"Progress was set to {num}");
+        }
+
+        public int CalculateProgress(long currentLine, long numOfLines)
+        {
+            var onePercent = 100.0f / numOfLines;
+            return (int) (onePercent * currentLine);
+        }
+
+        public void ResetProgress()
         {
             _lastProgress = 0;
             _readLines = 0;
