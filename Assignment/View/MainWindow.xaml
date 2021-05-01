@@ -1,0 +1,43 @@
+﻿<Window x:Class="AntonPaar.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Anton Paar - Assignment" Height="450" Width="800">
+    <Grid>
+        <Button Content="Durchsuchen" Command="{Binding SelectFileButtonCommand}" HorizontalAlignment="Left"
+                Margin="281,10,0,0" VerticalAlignment="Top"
+                Height="25" Width="92" Background="{x:Null}" BorderBrush="Black" />
+        <TextBox HorizontalAlignment="Left" Margin="10,10,0,0" Text="{Binding SelectedFilePath, Mode=OneWay}"
+                 IsReadOnly="True"
+                 TextWrapping="Wrap" VerticalAlignment="Top" Width="266" Height="25" VerticalContentAlignment="Center"
+                 HorizontalContentAlignment="Center" Background="{x:Null}" />
+        <ScrollViewer Margin="0,40,0,25" VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Hidden">
+            <DataGrid AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+                      VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                      ItemsSource="{Binding WordCountCollection}" Background="{x:Null}" BorderBrush="{x:Null}"
+                      HorizontalGridLinesBrush="#FFDADADA" VerticalGridLinesBrush="#FFDADADA">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Wort" Binding="{Binding Word}" />
+                    <DataGridTextColumn Header="Anzahl" Binding="{Binding Count}" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </ScrollViewer>
+        <Button CommandParameter="{Binding SelectedFilePath}" Command="{Binding StartButtonCommand}" Content="Start"
+                HorizontalAlignment="Right" Margin="0,10,97,0" VerticalAlignment="Top"
+                Width="45" Height="25" Background="{x:Null}" BorderBrush="Black" />
+        <Button Command="{Binding CancelButtonCommand}" Content="Abbrechen" HorizontalAlignment="Right"
+                Margin="0,10,10,0" VerticalAlignment="Top" Height="25"
+                Width="82" Background="{x:Null}" BorderBrush="#FFFF3939" />
+        <Grid Background="#FFE6E6E6" Height="25" VerticalAlignment="Bottom">
+            <ProgressBar Value="{Binding ParsingProgress}" HorizontalAlignment="Left" Height="10" Margin="57,0,0,0"
+                         VerticalAlignment="Center" Width="100" />
+            <Label x:Name="Label_Copy" Content="{Binding ParsingProgressLabelText, FallbackValue=0%}"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center" Height="25" Padding="10,0,0,0"
+                   VerticalContentAlignment="Center" Width="52" />
+        </Grid>
+    </Grid>
+</Window>
